@@ -1,0 +1,5 @@
+20220422	11:24:39	cec7ffa2-2b2a-45a8-baa4-1ad2fd91afbb	Error: Not allowed by CORS
+20220422	11:37:38	c59aa1db-546a-4504-a35b-cf3995e3cb5e	Error: Not allowed by CORS
+20220425	14:18:16	0538d2aa-0e15-4cbb-8ca9-ce990cb8df34	SyntaxError: Unexpected string in JSON at position 20
+20220425	14:18:47	a17764d8-3d31-461b-9618-e9274c4252a4	SyntaxError: Unexpected token } in JSON at position 46
+20220425	14:22:28	3c6c9efa-1d4e-4c49-946c-ad36d37491db	SyntaxError: Unexpected token } in JSON at position 15
