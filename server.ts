@@ -29,6 +29,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 
 app.use('/', require('./routes/root'));
 app.use('/users', require('./routes/api/users'));
+app.use('/notifications', require('./routes/api/notifications'));
 
 // app.all applies to all http methods (GET, POST, etc.)
 app.all('*', (req, res) => {
