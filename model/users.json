@@ -1,14 +1,38 @@
 [
     {
         "id": 1,
-        "username": "kunda"
+        "username": "martin",
+        "deviceToken": "",
+        "platform": "android"
     },
     {
         "id": 2,
-        "username": "kunda22"
+        "username": "martinmk",
+        "deviceToken": "",
+        "platform": "ios"
     },
     {
         "id": 3,
-        "username": "nova kunda"
+        "username": "martina",
+        "deviceToken": "",
+        "platform": "ios"
+    },
+    {
+        "id": 4,
+        "username": "martingh",
+        "deviceToken": "",
+        "platform": "ios"
+    },
+    {
+        "id": 5,
+        "username": "martin1",
+        "deviceToken": "",
+        "platform": "ios"
+    },
+    {
+        "id": 6,
+        "username": "martin2",
+        "deviceToken": "",
+        "platform": "android"
     }
 ]

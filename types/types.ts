@@ -1,6 +1,8 @@
 export interface User {
   id: number,
   username: string,
+  deviceToken?: string,
+  platform?: string,
 }
 
 export interface UsersData {
@@ -19,4 +21,14 @@ export interface NotificationData {
   caller: string,
   deviceToken: string,
   iosBundle: string,
+}
+
+export interface WebRTCToken {
+  registerClientId: string;
+  tokenLifeTime: number; //time(ms)
+  enableIncomingCall: boolean;
+  callClientRange: string;
+  cloudRegionId: string;
+  cloudUsername: string;
+  apiAccessKey: string;
 }

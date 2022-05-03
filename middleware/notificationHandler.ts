@@ -4,34 +4,35 @@ import path from "path";
 import * as apn from 'apn';
 import type { NotificationData } from "../types/types";
 
-export const sendNotification = (data: NotificationData): string => {
+export const sendNotification = async (data: NotificationData): Promise<any> => {
   let myCert = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
   let myKey = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
     .replace(/(.|\n)+?(?=-----BEGIN PRIVATE KEY-----)/, '')
     .trim();
 
-  var service = new apn.Provider({
+  let service = new apn.Provider({
       cert: myCert,
       key: myKey
   });
 
-  var note = new apn.Notification();
+  let note = new apn.Notification();
     note.id = data.uuid;
     note.payload = {"uuid": data.uuid, "callerName": data.caller, "handle": data.caller};
     note.topic = data.iosBundle;
 
-  service.send(note, data.deviceToken)
+  let response = service.send(note, data.deviceToken)
   .then((result: any) => {
     if (JSON.stringify(result.sent).length > 4) {
       console.log('notification sent');
       // let the phone know that notification has been sent
+      return 'success';
     } else {
       console.log('notification not sent');
+      return 'fail'
     }
-    console.log(JSON.stringify(result));
     return JSON.stringify(result);
   });
-  return JSON.stringify('result');
+  return (response);
 }
 
 // curl -v

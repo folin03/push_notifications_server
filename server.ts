@@ -5,6 +5,10 @@ import corsOptions from './config/cordOptions';
 import { logger } from './middleware/logEvents';
 import errorHandler from './middleware/errorHandler';
 
+import root from './routes/root';
+import users from './routes/api/users';
+import notifications from './routes/api/notifications';
+
 const app: Express = express();
 const PORT = process.env.PORT || 3500;
 
@@ -27,9 +31,9 @@ app.use(express.json());
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-app.use('/', require('./routes/root'));
-app.use('/users', require('./routes/api/users'));
-app.use('/notifications', require('./routes/api/notifications'));
+app.use('/', root);
+app.use('/users', users);
+app.use('/notifications', notifications);
 
 // app.all applies to all http methods (GET, POST, etc.)
 app.all('*', (req, res) => {
