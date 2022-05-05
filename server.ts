@@ -1,8 +1,8 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, {Express} from 'express';
 import path from 'path';
 import cors from 'cors';
 import corsOptions from './config/cordOptions';
-import { logger } from './middleware/logEvents';
+import {logger} from './middleware/logEvents';
 import errorHandler from './middleware/errorHandler';
 
 import root from './routes/root';

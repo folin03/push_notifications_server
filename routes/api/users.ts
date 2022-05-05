@@ -7,9 +7,12 @@ router.route('/')
   .get(usersController.getAllUsers)
   .post(usersController.createNewUser)
   .put(usersController.updateUser)
+  .delete(usersController.deleteUser);
 
-  router.route('/:id')
-    .get(usersController.getUser)
-    .delete(usersController.deleteUser);
+  router.route('/get_token')
+    .get(usersController.getUserToken)
+
+    router.route('/:id')
+      .get(usersController.getUser)
 
 export = router;

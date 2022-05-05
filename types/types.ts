@@ -1,6 +1,7 @@
 export interface User {
   id: number,
   username: string,
+  webrtcToken?: string,
   deviceToken?: string,
   platform?: string,
 }

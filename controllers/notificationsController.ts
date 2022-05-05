@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { updateUsersModel } from "../middleware/manageFile";
 import { sendNotification } from "../middleware/notificationHandler";
 import type { UsersData, User, Notification } from "../types/types";
 

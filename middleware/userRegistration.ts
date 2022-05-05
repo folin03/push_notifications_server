@@ -32,7 +32,7 @@ export const getToken = async (webRTCToken: WebRTCToken): Promise<string | void>
       return String((token as any).token);
     })
     .catch((error) => {
-      console.log(error)
+      console.error('[ getToken ]', error)
     });
   return regToken;
 };

@@ -17,9 +17,38 @@ export const getAllUsers = (req: Request, res: Response) => {
 export const getUser = (req: Request, res: Response) => {
   const existingUser = data.users.find((user: User) => user.id === parseInt(req.params.id));
   if (!existingUser) {
-    return res.status(400).json({'message': `User ID ${req.body.id} not found`});
+    return res.status(400).json({'message': `User ID ${req.params.id} not found`});
   }
   res.json(existingUser);
+}
+
+export const getUserToken = async (req: Request, res: Response) => {
+  const existingUser = data.users.find((user: User) => user.username === req.body.username);
+  if (!existingUser) {
+    return res.status(400).json({'message': `username ${req.body.username} not found`});
+  }
+  if (existingUser.id === req.body.id) {
+    let token = await getToken({
+      registerClientId: existingUser.username,
+      tokenLifeTime: WEBRTC_REGISTRATION.TOKEN_LIFE_TIME, //time(ms)
+      enableIncomingCall: WEBRTC_REGISTRATION.ENABLE_INCOMING_CALL,
+      callClientRange: WEBRTC_REGISTRATION.CALL_CLIENT_RANGE,
+      cloudRegionId: WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+      cloudUsername: WEBRTC_REGISTRATION.CLOUD_USER_NAME,
+      apiAccessKey: WEBRTC_REGISTRATION.API_ACCESS_KEY
+    })
+  
+    if (token) {
+      return res.status(200).json({
+        'username': existingUser.username,
+        'webrtc_token': token,
+        'webrtc_access_key': WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
+        'cloud_region_id': WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+        'log_level': WEBRTC_REGISTRATION.LOG_LEVEL
+      });
+    }
+  }
+  return res.status(400).json({'message': 'user id do not match'});
 }
 
 export const createNewUser = async (req: Request, res: Response) => {
@@ -41,7 +70,7 @@ export const createNewUser = async (req: Request, res: Response) => {
   }
   let token = await getToken({
     registerClientId: newUser.username,
-    tokenLifeTime: WEBRTC_REGISTRATION.TOKEN_LIFE_TIME, //time(ms)
+    tokenLifeTime: WEBRTC_REGISTRATION.TOKEN_LIFE_TIME,
     enableIncomingCall: WEBRTC_REGISTRATION.ENABLE_INCOMING_CALL,
     callClientRange: WEBRTC_REGISTRATION.CALL_CLIENT_RANGE,
     cloudRegionId: WEBRTC_REGISTRATION.CLOUD_REGION_ID,
@@ -49,10 +78,8 @@ export const createNewUser = async (req: Request, res: Response) => {
     apiAccessKey: WEBRTC_REGISTRATION.API_ACCESS_KEY
   })
 
-  // data.setUsers([...data.users, newUser]);
-  // updateUsersModel(data.users);
-  // res.status(201).json(data.users);
   if (token) {
+    newUser.webrtcToken = token;
     data.setUsers([...data.users, newUser]);
     updateUsersModel(data.users ? data.users : []);
     res.status(201).json({
@@ -69,30 +96,39 @@ export const createNewUser = async (req: Request, res: Response) => {
   
 }
 
-export const updateUser = (req: Request, res: Response) => {
-  const existingUser = data.users.find((user: User) => user.id === parseInt(req.body.id));
+export const updateUser = async (req: Request, res: Response) => {
+  const existingUser = data.users.find((user: User) => user.username === req.body.username);
   if (!existingUser) {
-    return res.status(400).json({'message': `User ID ${req.body.id} not found`});
+    return res.status(400).json({'message': `Username ${req.body.username} not found`});
   }
-  if (req.body.username) existingUser.username = req.body.username;
-  if (req.body.deviceToken) existingUser.deviceToken = req.body.deviceToken;
-  if (req.body.platform) existingUser.platform = req.body.platform;
-  const filteredArray = data.users.filter((user: User) => user.id !== parseInt(req.body.id)); // takes out user with old data
-  const unsortedArray = [...filteredArray, existingUser]; // adds filtered users + new user to data
-  data.setUsers(unsortedArray.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
-  updateUsersModel(data.users);
-  res.json(data.users);
+  if (!req.body.webrtcToken) {
+    return res.status(400).json({'message': `webrtcToken is required`});
+  }
+  if (existingUser.webrtcToken === req.body.webrtcToken) {
+    if (req.body.username) existingUser.username = req.body.username;
+    if (req.body.deviceToken) existingUser.deviceToken = req.body.deviceToken;
+    if (req.body.platform) existingUser.platform = req.body.platform;
+    const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
+    const unsortedArray = [...filteredArray, existingUser]; // adds filtered users + new user to data
+    data.setUsers(unsortedArray.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
+    updateUsersModel(data.users);
+    res.json(existingUser);
+  } else {
+    return res.status(400).json({'message': 'user does not match with the server record'});
+  }
 }
 
 export const deleteUser = (req: Request, res: Response) => {
-  const existingUser = data.users.find((user: User) => user.id === parseInt(req.params.id));
+  const existingUser = data.users.find((user: User) => user.username === req.body.username);
   if (!existingUser) {
-    return res.status(400).json({'message': `User ID ${req.body.id} not found`});
+    return res.status(400).json({'message': `Username ${req.body.username} not found`});
   }
-  console.log(existingUser);
-  const filteredArray = data.users.filter((user: User) => user.id !== parseInt(req.params.id)); // takes out user with old data
-  data.setUsers([...filteredArray]); // adds users to data
-  console.log(existingUser);
-  updateUsersModel(data.users);
-  res.json(data.users);
+  if (!req.body.webrtcToken) {
+    return res.status(400).json({'message': `webrtcToken is required`});
+  } else {
+    const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
+    data.setUsers([...filteredArray]); // adds users to data
+    updateUsersModel(data.users);
+    res.json(data.users);
+  }
 }
