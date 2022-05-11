@@ -25,30 +25,35 @@ export const getUser = (req: Request, res: Response) => {
 export const getUserToken = async (req: Request, res: Response) => {
   const existingUser = data.users.find((user: User) => user.username === req.body.username);
   if (!existingUser) {
-    return res.status(400).json({'message': `username ${req.body.username} not found`});
+    return res.status(400).json({'message': `Username ${req.body.username} not found`});
   }
-  if (existingUser.id === req.body.id) {
-    let token = await getToken({
-      registerClientId: existingUser.username,
-      tokenLifeTime: WEBRTC_REGISTRATION.TOKEN_LIFE_TIME, //time(ms)
-      enableIncomingCall: WEBRTC_REGISTRATION.ENABLE_INCOMING_CALL,
-      callClientRange: WEBRTC_REGISTRATION.CALL_CLIENT_RANGE,
-      cloudRegionId: WEBRTC_REGISTRATION.CLOUD_REGION_ID,
-      cloudUsername: WEBRTC_REGISTRATION.CLOUD_USER_NAME,
-      apiAccessKey: WEBRTC_REGISTRATION.API_ACCESS_KEY
-    })
-  
-    if (token) {
-      return res.status(200).json({
-        'username': existingUser.username,
-        'webrtc_token': token,
-        'webrtc_access_key': WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
-        'cloud_region_id': WEBRTC_REGISTRATION.CLOUD_REGION_ID,
-        'log_level': WEBRTC_REGISTRATION.LOG_LEVEL
-      });
-    }
+  let token = await getToken({
+    registerClientId: existingUser.username,
+    tokenLifeTime: WEBRTC_REGISTRATION.TOKEN_LIFE_TIME, //time(ms)
+    enableIncomingCall: WEBRTC_REGISTRATION.ENABLE_INCOMING_CALL,
+    callClientRange: WEBRTC_REGISTRATION.CALL_CLIENT_RANGE,
+    cloudRegionId: WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+    cloudUsername: WEBRTC_REGISTRATION.CLOUD_USER_NAME,
+    apiAccessKey: WEBRTC_REGISTRATION.API_ACCESS_KEY
+  })
+
+  if (token) {
+    existingUser.webrtcToken = token;
+    const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
+    const unsortedArray = [...filteredArray, existingUser]; // adds filtered users + new user to data
+    data.setUsers(unsortedArray.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
+    updateUsersModel(data.users);
+    
+    return res.status(200).json({
+      'username': existingUser.username,
+      'webrtcToken': token,
+      'webrtcAccessKey': WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
+      'cloudRegionId': WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+      'logLevel': WEBRTC_REGISTRATION.LOG_LEVEL
+    });
+
   }
-  return res.status(400).json({'message': 'user id do not match'});
+  return res.status(400).json({'message': 'could not obtain webRTC token'});
 }
 
 export const createNewUser = async (req: Request, res: Response) => {
@@ -83,12 +88,12 @@ export const createNewUser = async (req: Request, res: Response) => {
     data.setUsers([...data.users, newUser]);
     updateUsersModel(data.users ? data.users : []);
     res.status(201).json({
-      'user_id': newUser.id,
+      'id': newUser.id,
       'username': newUser.username,
-      'webrtc_token': token,
-      'webrtc_access_key': WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
-      'cloud_region_id': WEBRTC_REGISTRATION.CLOUD_REGION_ID,
-      'log_level': WEBRTC_REGISTRATION.LOG_LEVEL
+      'webrtcToken': token,
+      'webrtcAccessKey': WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
+      'cloudRegionId': WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+      'logLevel': WEBRTC_REGISTRATION.LOG_LEVEL
     });
   } else {
     res.status(400).json({'message': 'User was not created - could not obtain webRTC token'});

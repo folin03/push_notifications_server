@@ -10,7 +10,7 @@ router.route('/')
   .delete(usersController.deleteUser);
 
   router.route('/get_token')
-    .get(usersController.getUserToken)
+    .post(usersController.getUserToken)
 
     router.route('/:id')
       .get(usersController.getUser)

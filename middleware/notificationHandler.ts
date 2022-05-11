@@ -30,15 +30,15 @@ export const sendNotification = async (data: NotificationData): Promise<any> => 
       console.log('notification not sent');
       return 'fail'
     }
-    return JSON.stringify(result);
   });
   return (response);
 }
 
+// inspirational code
 // curl -v
-//  --header "apns-topic: org.reactjs.native.example.AculabCallNotificationsExample.voip"
+//  --header "apns-topic: org.reactjs.native.example.AculabCallNExample.voip"
 //  --header "apns-push-type: voip"
 //  --header "apns-id: 123e4567-e89b-12d3-a456-4266554400a0"
 //  --cert VOIP.pem:password
 //  --data '{"uuid":"123e4567-e89b-12d3-a456-4266554400a0", "callerName":"test", "handle":"some handle"}'
-//  --http2  https://api.sandbox.push.apple.com/3/device/6692c0f82ae82dd2f10c5cf2091ae53e3f0802afbae22491d4588cc1bb9dae0e
+//  --http2  https://api.sandbox.push.apple.com/3/device/6692c0f82ae82dd2f10c5cf2091ae53e3f0802afbae22491d4588cc1bb9dae0a
