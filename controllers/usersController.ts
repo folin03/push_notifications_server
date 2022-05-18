@@ -128,12 +128,8 @@ export const deleteUser = (req: Request, res: Response) => {
   if (!existingUser) {
     return res.status(400).json({'message': `Username ${req.body.username} not found`});
   }
-  if (!req.body.webrtcToken) {
-    return res.status(400).json({'message': `webrtcToken is required`});
-  } else {
-    const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
-    data.setUsers([...filteredArray]); // adds users to data
-    updateUsersModel(data.users);
-    res.json(data.users);
-  }
+  const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
+  data.setUsers([...filteredArray]); // adds users to data
+  updateUsersModel(data.users);
+  res.json(data.users);
 }

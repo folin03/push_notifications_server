@@ -1,3 +1,23 @@
 [
-    
+    {
+        "id": 4,
+        "username": "marmara",
+        "deviceToken": "fake-token",
+        "platform": "web",
+        "webrtcToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ik45dHZUcGhxX2ZKRjdrcEFZZ1c4aWRQVU1GZnE5MHFNTGRjWlpjSk81ckEiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiIwLTItMCIsImV4cCI6MTY1MjA5ODYwNCwiaWF0IjoxNjUyMDkyNjA0LCJpc3MiOiJoZWgwenBybWs3b2tndGw5MGR4OWkweGFvIiwibmJmIjoxNjUyMDkyNjA0LCJzY29wZSI6eyJ3ZWJydGNjbGllbnQiOnsiY2FsbF9jbGllbnQiOlsiKiJdLCJlbmFibGVfaW5jb21pbmciOnRydWV9fSwic3ViIjoibWFydGluIn0.bVc7GhPNgMgM9QFYWtqgd9MuBH4Gu-D5SZE1JZ_KmT5Dz4HoygQ1SoXADZBWHDyvslf3CfPj4cgOMvydodWfTBe0_Rf2PkhW3ho0sOoO1m5k-E_XHu_Hg9c9lwhb3fGBWmrQbof2vcQeNr9XYfaCivJ7wo0GjeUQNxKeVmvD0G0"
+    },
+    {
+        "id": 10,
+        "username": "marmar",
+        "deviceToken": "7026dd6952a4e49e609458c5f81db97c48e0838322a37771fd186cfe1d06487f",
+        "platform": "ios",
+        "webrtcToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ik45dHZUcGhxX2ZKRjdrcEFZZ1c4aWRQVU1GZnE5MHFNTGRjWlpjSk81ckEiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiIwLTItMCIsImV4cCI6MTY1Mjg3MDQ1NSwiaWF0IjoxNjUyODY0NDU1LCJpc3MiOiJoZWgwenBybWs3b2tndGw5MGR4OWkweGFvIiwibmJmIjoxNjUyODY0NDU1LCJzY29wZSI6eyJ3ZWJydGNjbGllbnQiOnsiY2FsbF9jbGllbnQiOlsiKiJdLCJlbmFibGVfaW5jb21pbmciOnRydWV9fSwic3ViIjoibWFybWFyIn0.hOafgEZ3QJwgDHezC4so1BXTHQaKaf4op4F7WjQ-SKovfuhe8GkO_nkCNGrgKOk7ccC2ce9eXsLzWZMYSiWivNtoI93_cxVj-Xots8gn_ywl5L5RzT6tV-Y3KDYveVnKKJ8DDm5Y4uqJdZ9yPJ4eZrijYTrbWdPLBC3fLhLA3nM"
+    },
+    {
+        "id": 11,
+        "username": "martin",
+        "deviceToken": "cjertE10Q-CtSdsWkdxYmT:APA91bG9r7XMnMSdS_HRZzxFVjWrK_MeoO4FC5Y-dXgkGPPlCjjdlmMdoJWNJc-di1rd0pj101a0pyT2eaK9XEDwGtm09KNMUjf3v6ux6fyTRykPPeLmKISlBOtDv92e-MipYrPWnVpa",
+        "platform": "android",
+        "webrtcToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ik45dHZUcGhxX2ZKRjdrcEFZZ1c4aWRQVU1GZnE5MHFNTGRjWlpjSk81ckEiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiIwLTItMCIsImV4cCI6MTY1Mjg3MDUzOCwiaWF0IjoxNjUyODY0NTM4LCJpc3MiOiJoZWgwenBybWs3b2tndGw5MGR4OWkweGFvIiwibmJmIjoxNjUyODY0NTM4LCJzY29wZSI6eyJ3ZWJydGNjbGllbnQiOnsiY2FsbF9jbGllbnQiOlsiKiJdLCJlbmFibGVfaW5jb21pbmciOnRydWV9fSwic3ViIjoibWFydGluIn0.gRz2BjWR0LV78suFxq6Sq1Ds3lzUyUpJJwM8YwIf1JpfPZXRYXGIMg7vr8IA3PkMWiXxIncDuY3rt9kUhcnOBk5LkTCyyfLoRBLEuYTQRWEqs6opI5geMVdH_0_9h-99RJA3b_bwHwxUTMpEYWAdMLaqZOeHFP5xtxv_m2b-Lhg"
+    }
 ]

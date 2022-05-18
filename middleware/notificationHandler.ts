@@ -2,9 +2,12 @@ import * as http2 from "http2";
 import fs from 'fs';
 import path from "path";
 import * as apn from 'apn';
-import type { NotificationData } from "../types/types";
+import type { NotificationData, NotificationDataAndroid } from "../types/types";
+import { NOTIFICATIONS } from "../constants.dev";
 
-export const sendNotification = async (data: NotificationData): Promise<any> => {
+const ANDROID_URL = 'https://fcm.googleapis.com/fcm/send'
+
+export const sendCallNotificationIos = async (data: NotificationData): Promise<any> => {
   let myCert = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
   let myKey = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
     .replace(/(.|\n)+?(?=-----BEGIN PRIVATE KEY-----)/, '')
@@ -18,7 +21,7 @@ export const sendNotification = async (data: NotificationData): Promise<any> => 
   let note = new apn.Notification();
     note.id = data.uuid;
     note.payload = {"uuid": data.uuid, "callerName": data.caller, "handle": data.caller};
-    note.topic = data.iosBundle;
+    note.topic = data.bundle;
 
   let response = service.send(note, data.deviceToken)
   .then((result: any) => {
@@ -27,12 +30,98 @@ export const sendNotification = async (data: NotificationData): Promise<any> => 
       // let the phone know that notification has been sent
       return 'success';
     } else {
-      console.log('notification not sent');
+      console.log('notification not sent', result);
       return 'fail'
     }
   });
   return (response);
 }
+
+export const sendCallNotificationAndroid = async (data: NotificationData): Promise<any> => {
+  // console.log('[ sendNotification ] Android:', data);
+  const url = ANDROID_URL;
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'topic': 'com.aculab.examplecode.AculabCall',
+    'Authorization': 'key=AAAAvP6d37w:APA91bHTQNoFw2KtnKOfgWWzo-ljDcy_obIq8n52aHk0vjhtlZlXQ1haTqYJHZK0-pzfU9kuKP6tPTm1PiVc9J1JHDimqxZVnbCKD2mn6yDXpFeye0VuTMDixJw7AW-bIy4gY-_zzjHR'
+  };
+  const body = JSON.stringify({
+    to: data.deviceToken,
+    data:{
+      channel_id: 'acu_incoming_call',
+      title: 'Incoming Call',
+      body: data.caller,
+      uuid: data.uuid
+    },
+    priority: 'high',
+    topic: 'all',
+    time_to_live: 0
+  });
+
+  const response = fetch(url, {
+    method: 'POST',
+    body: body,
+    headers: headers,
+  })
+    .then((res) => {
+      var blob = res.json();
+      return blob;
+    })
+    .then((data) => {
+      console.log('[ sendNotification ] data:', data);
+      return data;
+    })
+    .catch((error) => {
+      console.error('[ sendNotification ] error:', error);
+    });
+  return response;
+};
+
+export const sendNotificationAndroid = async (data: NotificationData): Promise<any> => {
+  const url = ANDROID_URL;
+  const headers = {
+    'Accept': '*/*',
+    'Content-Type': 'application/json',
+    'topic': data.bundle,
+    'Authorization': `key=${NOTIFICATIONS.ANDROID_KEY}`,
+  };
+  const body = JSON.stringify({
+    to: data.deviceToken,
+    data:{
+      title: 'Notification',
+      body: data.callee,
+      uuid: data.uuid,
+      webrtc_ready: data.webrtc_ready
+    },
+    priority: 'high',
+    topic: 'all',
+    time_to_live: 0
+  });
+
+  console.log('[ Android notification url ]', url);
+  console.log('[ Android notification headers ]', headers);
+  console.log('[ Android notification body ]', body);
+
+  const response = fetch(url, {
+    method: 'POST',
+    body: body,
+    headers: headers,
+  })
+    .then((res) => {
+      console.log('[ sendNotification ] res:', data);
+      var blob = res.json();
+      return blob;
+    })
+    .then((data) => {
+      console.log('[ sendNotification ] data:', data);
+      return data;
+    })
+    .catch((err) => {
+      console.error('[ sendNotification ] error:', err);
+    });
+  return response;
+};
 
 // inspirational code
 // curl -v
