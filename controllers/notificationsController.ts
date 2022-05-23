@@ -71,7 +71,7 @@ export const newNotification = async (req: Request, res: Response): Promise<any>
     return res.status(400).json({ 'message': 'uuid, caller and callee are required'});
   }
   if (!caller || !caller.deviceToken) {
-    return res.status(400).json({'message': `callee ${req.body.callee} is not registered`});
+    return res.status(400).json({'message': `caller ${req.body.callee} is not registered`});
   }
 
   let notificationResponse;
