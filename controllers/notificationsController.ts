@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { sendCallNotificationAndroid, sendCallNotificationIos, sendNotificationAndroid } from "../middleware/notificationHandler";
+import { sendCallNotificationAndroid, sendCallNotificationIos, sendNotificationAndroid, sendNotificationIos } from "../middleware/notificationHandler";
 import type { UsersData, User, Notification } from "../types/types";
 
 import { NOTIFICATIONS } from "../constants.dev";
@@ -21,17 +21,20 @@ export const newCallNotification = async (req: Request, res: Response): Promise<
   if (!notification.uuid || !notification.caller || ! notification.callee) {
     return res.status(400).json({ 'message': 'uuid, caller and callee are required'});
   }
-  if (!callee || !callee.deviceToken) {
+  if (!callee || !callee.fcmDeviceToken) {
     return res.status(400).json({'message': `callee ${req.body.callee} is not registered`});
   }
 
   let notificationResponse;
   switch(callee.platform) {
     case 'ios':
+      if (!callee.iosDeviceToken) {
+        return res.status(400).json({'message': `callee ${req.body.callee} is not registered`});
+      }
       notificationResponse = await sendCallNotificationIos({
         uuid: notification.uuid,
         caller: notification.caller,
-        deviceToken: callee.deviceToken,
+        iosDeviceToken: callee.iosDeviceToken,
         bundle: NOTIFICATIONS.IOS_BUNDLE,
       });
       break;
@@ -40,7 +43,7 @@ export const newCallNotification = async (req: Request, res: Response): Promise<
       notificationResponse = await sendCallNotificationAndroid({
         uuid: notification.uuid,
         caller: notification.caller,
-        deviceToken: callee.deviceToken,
+        fcmDeviceToken: callee.fcmDeviceToken,
         bundle: NOTIFICATIONS.IOS_BUNDLE,
       });
       break;
@@ -50,6 +53,7 @@ export const newCallNotification = async (req: Request, res: Response): Promise<
       return res.status(200).json({'message': 'calling_web_interface'});
   }
   
+  // TODO sort out when it is success and when not
   if (notificationResponse === 'success') {
     res.status(200).json({'message': notificationResponse});
   } else {
@@ -70,7 +74,7 @@ export const newNotification = async (req: Request, res: Response): Promise<any>
   if (!notification.uuid || !notification.caller || ! notification.callee) {
     return res.status(400).json({ 'message': 'uuid, caller and callee are required'});
   }
-  if (!caller || !caller.deviceToken) {
+  if (!caller || !caller.fcmDeviceToken) {
     return res.status(400).json({'message': `caller ${req.body.callee} is not registered`});
   }
 
@@ -78,19 +82,20 @@ export const newNotification = async (req: Request, res: Response): Promise<any>
   switch(caller.platform) {
     case 'ios':
       console.log('ios');
-      // notificationResponse = await sendNotificationIos({
-      //   uuid: notification.uuid,
-      //   caller: notification.caller,
-      //   deviceToken: callee.deviceToken,
-      //   iosBundle: NOTIFICATIONS.IOS_BUNDLE,
-      // });
+      notificationResponse = await sendNotificationIos({
+        uuid: notification.uuid,
+        callee: notification.callee,
+        fcmDeviceToken: caller.fcmDeviceToken,
+        bundle: NOTIFICATIONS.ANDROID_BUNDLE,
+        webrtc_ready: notification.webrtc_ready
+      });
       break;
     case 'android':
       console.log('Android');
       notificationResponse = await sendNotificationAndroid({
         uuid: notification.uuid,
         callee: notification.callee,
-        deviceToken: caller.deviceToken,
+        fcmDeviceToken: caller.fcmDeviceToken,
         bundle: NOTIFICATIONS.ANDROID_BUNDLE,
         webrtc_ready: notification.webrtc_ready
       });
@@ -101,9 +106,10 @@ export const newNotification = async (req: Request, res: Response): Promise<any>
       return res.status(200).json({'message': 'calling_web_interface'});
   }
   
+  // TODO sort out when it is success and when not
   if (notificationResponse === 'success') {
     res.status(200).json({'message': notificationResponse});
-  } else {
-    res.status(400).json({'message': notificationResponse});
+  // } else {
+  //   res.status(400).json({'message': notificationResponse});
   }
 }

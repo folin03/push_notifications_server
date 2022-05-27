@@ -2,7 +2,8 @@ export interface User {
   id: number;
   username: string;
   webrtcToken?: string;
-  deviceToken?: string;
+  fcmDeviceToken?: string;
+  iosDeviceToken?: string;
   platform?: string;
 }
 
@@ -22,7 +23,8 @@ export interface NotificationData {
   uuid: string;
   caller?: string;
   callee?: string;
-  deviceToken: string;
+  fcmDeviceToken?: string;
+  iosDeviceToken?: string;
   bundle: string;
   webrtc_ready?: boolean;
 }

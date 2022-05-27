@@ -66,7 +66,8 @@ export const createNewUser = async (req: Request, res: Response) => {
   const newUser: User = {
     id: data.users?.length ? data.users[data.users.length - 1].id + 1 : 1,
     username: req.body.username,
-    deviceToken: req.body.deviceToken,
+    fcmDeviceToken: req.body.fcmDeviceToken,
+    iosDeviceToken: req.body.iosDeviceToken,
     platform: req.body.platform
   }
 
@@ -111,7 +112,8 @@ export const updateUser = async (req: Request, res: Response) => {
   }
   if (existingUser.webrtcToken === req.body.webrtcToken) {
     if (req.body.username) existingUser.username = req.body.username;
-    if (req.body.deviceToken) existingUser.deviceToken = req.body.deviceToken;
+    if (req.body.fcmDeviceToken) existingUser.fcmDeviceToken = req.body.fcmDeviceToken;
+    if (req.body.iosDeviceToken) existingUser.iosDeviceToken = req.body.iosDeviceToken;
     if (req.body.platform) existingUser.platform = req.body.platform;
     const filteredArray = data.users.filter((user: User) => user.username !== req.body.username); // takes out user with old data
     const unsortedArray = [...filteredArray, existingUser]; // adds filtered users + new user to data
