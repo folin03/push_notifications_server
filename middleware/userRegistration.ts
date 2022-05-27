@@ -1,7 +1,6 @@
 import base64 from 'base-64';
 import fetch from 'node-fetch';
-import type { WebRTCToken } from "../types/types";
-
+import type { WebRTCToken } from '../types/types';
 
 /**
  * Get WebRTC token for registration.\
@@ -9,7 +8,9 @@ import type { WebRTCToken } from "../types/types";
  * @param {WebRTCToken} webRTCToken - A WebRTCToken object
  * @returns {string} WebRTC Token string
  */
-export const getToken = async (webRTCToken: WebRTCToken): Promise<string | void> => {
+export const getToken = async (
+  webRTCToken: WebRTCToken
+): Promise<string | void> => {
   let url =
     `https://ws-${webRTCToken.cloudRegionId}` +
     `.aculabcloud.net/webrtc_generate_token?client_id=${webRTCToken.registerClientId}` +
@@ -21,7 +22,8 @@ export const getToken = async (webRTCToken: WebRTCToken): Promise<string | void>
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + base64.encode(`${username}:${webRTCToken.apiAccessKey}`),
+      'Authorization':
+        'Basic ' + base64.encode(`${username}:${webRTCToken.apiAccessKey}`),
     },
   })
     .then((response) => {
@@ -32,7 +34,7 @@ export const getToken = async (webRTCToken: WebRTCToken): Promise<string | void>
       return String((token as any).token);
     })
     .catch((error) => {
-      console.error('[ getToken ]', error)
+      console.error('[ getToken ]', error);
     });
   return regToken;
 };

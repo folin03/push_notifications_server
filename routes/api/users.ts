@@ -1,18 +1,17 @@
-import express from "express";
-import * as usersController from "../../controllers/usersController";
+import express from 'express';
+import * as usersController from '../../controllers/usersController';
 
 const router = express.Router();
 
-router.route('/')
+router
+  .route('/')
   .get(usersController.getAllUsers)
   .post(usersController.createNewUser)
   .put(usersController.updateUser)
   .delete(usersController.deleteUser);
 
-  router.route('/get_token')
-    .post(usersController.getUserToken)
+router.route('/get_token').post(usersController.getUserToken);
 
-    router.route('/:id')
-      .get(usersController.getUser)
+router.route('/:id').get(usersController.getUser);
 
 export = router;

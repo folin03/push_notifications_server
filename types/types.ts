@@ -31,7 +31,7 @@ export interface NotificationData {
 
 export interface NotificationDataAndroid {
   to: string;
-  data:{
+  data: {
     channel_id: string;
     title: string;
     body: string;

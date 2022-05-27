@@ -1,42 +1,56 @@
-import * as http2 from "http2";
+import * as http2 from 'http2';
 import fs from 'fs';
-import path from "path";
+import path from 'path';
 import * as apn from 'apn';
-import type { NotificationData, NotificationDataAndroid } from "../types/types";
-import { NOTIFICATIONS } from "../constants.dev";
-import axios from 'axios'
+import type { NotificationData, NotificationDataAndroid } from '../types/types';
+import { NOTIFICATIONS } from '../constants.dev';
+import axios from 'axios';
 
-const ANDROID_URL = 'https://fcm.googleapis.com/fcm/send'
+const ANDROID_URL = 'https://fcm.googleapis.com/fcm/send';
 
-export const sendCallNotificationIos = async (data: NotificationData): Promise<any> => {
-  let myCert = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
-  let myKey = fs.readFileSync(path.join(__dirname , '..', 'certificates', 'VOIP.pem'), "utf8")
+export const sendCallNotificationIos = async (
+  data: NotificationData
+): Promise<any> => {
+  let myCert = fs.readFileSync(
+    path.join(__dirname, '..', 'certificates', 'VOIP.pem'),
+    'utf8'
+  );
+  let myKey = fs
+    .readFileSync(
+      path.join(__dirname, '..', 'certificates', 'VOIP.pem'),
+      'utf8'
+    )
     .replace(/(.|\n)+?(?=-----BEGIN PRIVATE KEY-----)/, '')
     .trim();
 
   let service = new apn.Provider({
-      cert: myCert,
-      key: myKey
+    cert: myCert,
+    key: myKey,
   });
 
   let note = new apn.Notification();
-    note.id = data.uuid;
-    note.payload = {"uuid": data.uuid, "callerName": data.caller, "handle": data.caller};
-    note.topic = data.bundle;
+  note.id = data.uuid;
+  note.payload = {
+    uuid: data.uuid,
+    callerName: data.caller,
+    handle: data.caller,
+  };
+  note.topic = data.bundle;
 
-  let response = service.send(note, data.iosDeviceToken as string)
-  .then((result: any) => {
-    if (JSON.stringify(result.sent).length > 4) {
-      console.log('notification sent');
-      // let the phone know that notification has been sent
-      return 'success';
-    } else {
-      console.log('notification not sent', result);
-      return 'fail'
-    }
-  });
-  return (response);
-}
+  let response = service
+    .send(note, data.iosDeviceToken as string)
+    .then((result: any) => {
+      if (JSON.stringify(result.sent).length > 4) {
+        console.log('notification sent');
+        // let the phone know that notification has been sent
+        return 'success';
+      } else {
+        console.log('notification not sent', result);
+        return 'fail';
+      }
+    });
+  return response;
+};
 
 // export const sendCallNotificationAndroid = async (data: NotificationData): Promise<any> => {
 //   // console.log('[ sendNotification ] Android:', data);
@@ -79,7 +93,9 @@ export const sendCallNotificationIos = async (data: NotificationData): Promise<a
 //   return response;
 // };
 
-export const sendCallNotificationAndroid = async (data: NotificationData): Promise<any> => {
+export const sendCallNotificationAndroid = async (
+  data: NotificationData
+): Promise<any> => {
   const response = axios({
     method: 'post',
     url: ANDROID_URL,
@@ -91,28 +107,30 @@ export const sendCallNotificationAndroid = async (data: NotificationData): Promi
     },
     data: {
       to: data.fcmDeviceToken,
-      data:{
+      data: {
         channel_id: 'acu_incoming_call',
         title: 'Incoming Call',
         body: data.caller,
-        uuid: data.uuid
+        uuid: data.uuid,
       },
       priority: 'high',
       topic: 'all',
-      time_to_live: 0
-    }
+      time_to_live: 0,
+    },
   })
-  .then((res) => {
-    console.log('[ sendNotification ] data:', res.data);
-    return res.data;
-  })
-  .catch((error) => {
-    console.error('[ sendNotification ] error:', error);
-  });
+    .then((res) => {
+      console.log('[ sendNotification ] data:', res.data);
+      return res.data;
+    })
+    .catch((error) => {
+      console.error('[ sendNotification ] error:', error);
+    });
   return response;
 };
 
-export const sendNotificationIos = async (data: NotificationData): Promise<any> => {
+export const sendNotificationIos = async (
+  data: NotificationData
+): Promise<any> => {
   const response = axios({
     method: 'post',
     url: ANDROID_URL,
@@ -124,28 +142,30 @@ export const sendNotificationIos = async (data: NotificationData): Promise<any> 
     },
     data: {
       to: data.fcmDeviceToken,
-      data:{
+      data: {
         title: 'Notification',
         body: data.callee,
         uuid: data.uuid,
-        webrtc_ready: data.webrtc_ready
+        webrtc_ready: data.webrtc_ready,
       },
-      "content_available": true,
+      content_available: true,
       topic: 'all',
-      time_to_live: 0
-    }
+      time_to_live: 0,
+    },
   })
-  .then((res) => {
-    console.log('[ sendNotification ] data:', res.data);
-    return res.data;
-  })
-  .catch((error) => {
-    console.error('[ sendNotification ] error:', error);
-  });
+    .then((res) => {
+      console.log('[ sendNotification ] data:', res.data);
+      return res.data;
+    })
+    .catch((error) => {
+      console.error('[ sendNotification ] error:', error);
+    });
   return response;
-}
+};
 
-export const sendNotificationAndroid = async (data: NotificationData): Promise<any> => {
+export const sendNotificationAndroid = async (
+  data: NotificationData
+): Promise<any> => {
   const response = axios({
     method: 'post',
     url: ANDROID_URL,
@@ -157,26 +177,26 @@ export const sendNotificationAndroid = async (data: NotificationData): Promise<a
     },
     data: {
       to: data.fcmDeviceToken,
-      data:{
+      data: {
         title: 'Notification',
         body: data.callee,
         uuid: data.uuid,
-        webrtc_ready: data.webrtc_ready
+        webrtc_ready: data.webrtc_ready,
       },
       priority: 'high',
       topic: 'all',
-      time_to_live: 0
-    }
+      time_to_live: 0,
+    },
   })
-  .then((res) => {
-    console.log('[ sendNotification ] data:', res.data);
-    return res.data;
-  })
-  .catch((error) => {
-    console.error('[ sendNotification ] error:', error);
-  });
+    .then((res) => {
+      console.log('[ sendNotification ] data:', res.data);
+      return res.data;
+    })
+    .catch((error) => {
+      console.error('[ sendNotification ] error:', error);
+    });
   return response;
-}
+};
 
 // inspirational code
 // curl -v
