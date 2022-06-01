@@ -51,6 +51,7 @@ export const sendCallNotificationIos = async (
         return 'fail';
       }
     });
+  service.shutdown();
   return response;
 };
 

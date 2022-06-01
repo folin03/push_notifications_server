@@ -175,9 +175,15 @@ export const refreshWebrtcToken = async (req: Request, res: Response) => {
 
     db.close(); //closing connection
     if (updatedUser) {
-      return res.status(200).json(updatedUser.webrtcToken);
+      return res.status(200).json({
+        username: updatedUser.username,
+        webrtcToken: updatedUser.webrtcToken,
+        webrtcAccessKey: WEBRTC_REGISTRATION.WEBRTC_ACCESS_KEY,
+        cloudRegionId: WEBRTC_REGISTRATION.CLOUD_REGION_ID,
+        logLevel: WEBRTC_REGISTRATION.LOG_LEVEL
+      });
     }
-  return res.status(400).json({error: 'user not created'});
+  return res.status(400).json({error: 'Token not refreshed'});
   }
 };
 
