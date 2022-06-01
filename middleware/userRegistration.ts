@@ -1,5 +1,5 @@
+import axios from 'axios';
 import base64 from 'base-64';
-import fetch from 'node-fetch';
 import type { WebRTCToken } from '../types/types';
 
 /**
@@ -11,30 +11,28 @@ import type { WebRTCToken } from '../types/types';
 export const getToken = async (
   webRTCToken: WebRTCToken
 ): Promise<string | void> => {
-  let url =
+  const username = `${webRTCToken.cloudRegionId}/${webRTCToken.cloudUsername}`;
+  const url = 
     `https://ws-${webRTCToken.cloudRegionId}` +
     `.aculabcloud.net/webrtc_generate_token?client_id=${webRTCToken.registerClientId}` +
     `&ttl=${webRTCToken.tokenLifeTime}` +
     `&enable_incoming=${webRTCToken.enableIncomingCall}` +
     `&call_client=${webRTCToken.callClientRange}`;
-  let username = `${webRTCToken.cloudRegionId}/${webRTCToken.cloudUsername}`;
-  var regToken = fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization':
-        'Basic ' + base64.encode(`${username}:${webRTCToken.apiAccessKey}`),
-    },
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic ' + base64.encode(`${username}:${webRTCToken.apiAccessKey}`),
+  }
+
+  const regToken = axios({
+    method: 'get',
+    url: url,
+    headers: headers,
   })
-    .then((response) => {
-      var stuff = response.json();
-      return stuff;
+    .then((response: any) => {
+      return response.data.token
     })
-    .then((token) => {
-      return String((token as any).token);
-    })
-    .catch((error) => {
-      console.error('[ getToken ]', error);
+    .catch((error: Error) => {
+      console.error('[ sendNotification ] error:', error);
     });
   return regToken;
 };

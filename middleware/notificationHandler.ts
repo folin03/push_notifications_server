@@ -11,11 +11,11 @@ const ANDROID_URL = 'https://fcm.googleapis.com/fcm/send';
 export const sendCallNotificationIos = async (
   data: NotificationData
 ): Promise<any> => {
-  let myCert = fs.readFileSync(
+  const myCert = fs.readFileSync(
     path.join(__dirname, '..', 'certificates', 'VOIP.pem'),
     'utf8'
   );
-  let myKey = fs
+  const myKey = fs
     .readFileSync(
       path.join(__dirname, '..', 'certificates', 'VOIP.pem'),
       'utf8'
@@ -23,21 +23,23 @@ export const sendCallNotificationIos = async (
     .replace(/(.|\n)+?(?=-----BEGIN PRIVATE KEY-----)/, '')
     .trim();
 
-  let service = new apn.Provider({
+  const service = new apn.Provider({
     cert: myCert,
     key: myKey,
   });
 
-  let note = new apn.Notification();
-  note.id = data.uuid;
-  note.payload = {
-    uuid: data.uuid,
-    callerName: data.caller,
-    handle: data.caller,
-  };
-  note.topic = data.bundle;
+  const note = new apn.Notification({
+    id: data.uuid,
+    payload: {
+      uuid: data.uuid,
+      callerName: data.caller,
+      handle: data.caller,
+    },
+    topic: data.bundle,
+  });
+  
 
-  let response = service
+  const response = service
     .send(note, data.iosDeviceToken as string)
     .then((result: any) => {
       if (JSON.stringify(result.sent).length > 4) {
@@ -51,47 +53,6 @@ export const sendCallNotificationIos = async (
     });
   return response;
 };
-
-// export const sendCallNotificationAndroid = async (data: NotificationData): Promise<any> => {
-//   // console.log('[ sendNotification ] Android:', data);
-//   const url = ANDROID_URL;
-//   const headers = {
-//     'Accept': 'application/json',
-//     'Content-Type': 'application/json',
-//     'topic': 'com.aculab.examplecode.AculabCall',
-//     'Authorization': 'key=AAAAvP6d37w:APA91bHTQNoFw2KtnKOfgWWzo-ljDcy_obIq8n52aHk0vjhtlZlXQ1haTqYJHZK0-pzfU9kuKP6tPTm1PiVc9J1JHDimqxZVnbCKD2mn6yDXpFeye0VuTMDixJw7AW-bIy4gY-_zzjHR'
-//   };
-//   const body = JSON.stringify({
-//     to: data.fcmDeviceToken,
-//     data:{
-//       channel_id: 'acu_incoming_call',
-//       title: 'Incoming Call',
-//       body: data.caller,
-//       uuid: data.uuid
-//     },
-//     priority: 'high',
-//     topic: 'all',
-//     time_to_live: 0
-//   });
-
-//   const response = fetch(url, {
-//     method: 'POST',
-//     body: body,
-//     headers: headers,
-//   })
-//     .then((res) => {
-//       var blob = res.json();
-//       return blob;
-//     })
-//     .then((data) => {
-//       console.log('[ sendNotification ] data:', data);
-//       return data;
-//     })
-//     .catch((error) => {
-//       console.error('[ sendNotification ] error:', error);
-//     });
-//   return response;
-// };
 
 export const sendCallNotificationAndroid = async (
   data: NotificationData

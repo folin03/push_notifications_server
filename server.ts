@@ -1,7 +1,8 @@
 import express, { Express } from 'express';
 import path from 'path';
 import cors from 'cors';
-import sqlite3 from 'sqlite3';
+import EventEmitter from 'events';
+
 import corsOptions from './config/cordOptions';
 import { logger } from './middleware/logEvents';
 import errorHandler from './middleware/errorHandler';
@@ -9,22 +10,24 @@ import errorHandler from './middleware/errorHandler';
 import root from './routes/root';
 import users from './routes/api/users';
 import notifications from './routes/api/notifications';
+import { connectDb } from './middleware/dbHandler';
 
-const app: Express = express();
+
+// EventEmitter.defaultMaxListeners = 25;
+
+const db = connectDb();
+
+db.serialize(function() {
+  // create users table if it does not exist
+  db.run(
+    'CREATE TABLE IF NOT EXISTS users(username, webrtcToken, platform, fcmDeviceToken, iosDeviceToken)'
+  );
+})
+db.close();
+
 const PORT = process.env.PORT || 3500;
-
-class AppDAO {
-  constructor(dbFilePath) {
-    this.db = new sqlite3.Database(dbFilePath, (err) => {
-      if (err) {
-        console.log('Could not connect to database', err);
-      } else {
-        console.log('Connected to database');
-      }
-    }); 
-  }
-}
-// express works like a waterfall, therefore higher lines od code are executed before lower lines of code
+const app: Express = express();
+// express works like a waterfall, therefore higher lines of code are executed before lower lines of code
 
 // custom middleware logger
 app.use(logger);

@@ -5,13 +5,15 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(usersController.getAllUsers)
-  .post(usersController.createNewUser)
-  .put(usersController.updateUser)
-  .delete(usersController.deleteUser);
+  .get(usersController.routeAllUsers)
+  .post(usersController.routeCreateNewUser)
+  .put(usersController.routeUpdateUser)
+  .delete(usersController.routeDeleteUser); // TODO
 
-router.route('/get_token').post(usersController.getUserToken);
+  router.route('/user').get(usersController.routeGetUser);
 
-router.route('/:id').get(usersController.getUser);
+  router.route('/get_token').post(usersController.refreshWebrtcToken);
+
+// router.route('/:id').get(usersController.getUser);
 
 export = router;
