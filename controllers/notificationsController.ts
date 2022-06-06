@@ -9,8 +9,13 @@ import type { UsersData, User, Notification } from '../types/types';
 
 import { NOTIFICATIONS } from '../constants.dev';
 import { connectDb, getUser } from '../middleware/dbHandler';
-import { platform } from 'os';
 
+/**
+ * send call notification ios/android
+ * @param {Request} req request from route (requires uuid, caller and callee)
+ * @param {Request} res response to route
+ * @returns information about sent call notification
+ */
 export const newCallNotification = async (
   req: Request,
   res: Response
@@ -44,7 +49,7 @@ export const newCallNotification = async (
   if (!callee || !callee.fcmDeviceToken || (callee.platform === 'ios' && !callee.iosDeviceToken)) {
     return res
       .status(400)
-      .json({ message: `callee ${notification.callee} is not registered` });
+      .json({ error: `callee ${notification.callee} is not registered` });
   }
 
   let notificationResponse;
@@ -63,7 +68,6 @@ export const newCallNotification = async (
       });
       break;
     case 'android':
-      console.log('Android');
       notificationResponse = await sendCallNotificationAndroid({
         uuid: notification.uuid,
         caller: notification.caller,
@@ -77,14 +81,19 @@ export const newCallNotification = async (
       return res.status(200).json({ message: 'calling_web_interface' });
   }
 
-  // TODO sort out when it is success and when not
   if (notificationResponse === 'success') {
     res.status(200).json({ message: notificationResponse });
   } else {
-    res.status(400).json({ message: notificationResponse });
+    res.status(400).json({ error: notificationResponse });
   }
 };
 
+/**
+ * send a silent notification ios/android
+ * @param {Request} req request from route (requires uuid, caller, callee and webrtc_ready)
+ * @param {Request} res response to route
+ * @returns information about sent notification 
+ */
 export const newNotification = async (
   req: Request,
   res: Response
@@ -124,7 +133,6 @@ export const newNotification = async (
   let notificationResponse;
   switch (caller.platform) {
     case 'ios':
-      console.log('ios');
       notificationResponse = await sendNotificationIos({
         uuid: notification.uuid,
         callee: notification.callee,
@@ -134,7 +142,6 @@ export const newNotification = async (
       });
       break;
     case 'android':
-      console.log('Android');
       notificationResponse = await sendNotificationAndroid({
         uuid: notification.uuid,
         callee: notification.callee,
@@ -149,7 +156,6 @@ export const newNotification = async (
       return res.status(200).json({ message: 'calling_web_interface' });
   }
 
-  // TODO sort out when it is success and when not
   if (notificationResponse === 'success') {
     res.status(200).json({ message: notificationResponse });
     // } else {

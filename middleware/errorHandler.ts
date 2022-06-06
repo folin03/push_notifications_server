@@ -1,6 +1,13 @@
 import { logEvents } from './logEvents';
 import { NextFunction, Request, Response } from 'express';
 
+/**
+ * error handles, logs errors
+ * @param {Error} err error to log 
+ * @param {Request} req request caused error 
+ * @param {Response} res response to request
+ * @param {NextFunction} next next function (currently not used)
+ */
 const errorHandler = (
   err: Error,
   req: Request,

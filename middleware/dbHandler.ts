@@ -52,7 +52,7 @@ export const getAllUsers = (db: Database, callback: CallableFunction) => {
  * use to find a user in database
  * @param {Database} db database connection 
  * @param {string} username user to be found in database
- * @returns user
+ * @returns {Promise} user
  */
 export const getUser = async (db: Database, username: string): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ export const getUser = async (db: Database, username: string): Promise<any> => {
  * creates new user
  * @param {Database} db database connection 
  * @param {User} newUser user object (expected webrtcToken, username and platform)
- * @returns user if created
+ * @returns {Promise} user if created
  */
 export const createNewUser = async (db: Database, newUser: User) => {
   return new Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ export const createNewUser = async (db: Database, newUser: User) => {
  * use to update platform for a user in db
  * @param {Database} db database connection 
  * @param {User} user user object (expected username and platform)
- * @returns updated user
+ * @returns {Promise} updated user
  */
 export const updatePlatform = async (db: Database, user: User) => {
   return new Promise((resolve, reject) => {
@@ -121,7 +121,7 @@ export const updatePlatform = async (db: Database, user: User) => {
  * use to update FCM Token for a user in db
  * @param {Database} db database connection 
  * @param {User} user user object (expected username and fcmDeviceToken)
- * @returns updated user
+ * @returns {Promise} updated user
  */
 export const updateFcmToken = async (db: Database, user: User) => {
   return new Promise((resolve, reject) => {
@@ -143,7 +143,7 @@ export const updateFcmToken = async (db: Database, user: User) => {
  * use to update iOS APN Token for a user in db
  * @param {Database} db database connection 
  * @param {User} user user object (expected username and iosDeviceToken)
- * @returns updated user
+ * @returns {Promise} updated user
  */
 export const updateIosToken = async (db: Database, user: User) => {
   return new Promise((resolve, reject) => {
@@ -165,7 +165,7 @@ export const updateIosToken = async (db: Database, user: User) => {
  * use to update WebRTC Token for a user in db
  * @param {Database} db database connection 
  * @param {User} user user object (expected username and webrtcToken)
- * @returns updated user
+ * @returns {Promise} updated user
  */
 export const updateWebrtcToken = async (db: Database, user: User) => {
   return new Promise((resolve, reject) => {
@@ -183,6 +183,12 @@ export const updateWebrtcToken = async (db: Database, user: User) => {
   })
 }
 
+/**
+ * delete user if exists
+ * @param {Database} db 
+ * @param {string} username 
+ * @returns {Promise} string
+ */
 export const deleteUser = async (db: Database, username: string) => {
   return new Promise((resolve, reject) => {
     db.run(usersDb.delete, [username], (err: Error) => {
@@ -198,13 +204,3 @@ export const deleteUser = async (db: Database, username: string) => {
     });
   })
 }
-
-// db.run(
-//   usersDb.delete,
-//   ['ben'],
-//   err => {
-//     if (err) return console.error('db error', err.message);
-
-//   console.log('user deleted')
-//   }
-// );

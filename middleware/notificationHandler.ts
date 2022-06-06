@@ -1,8 +1,7 @@
-import * as http2 from 'http2';
 import fs from 'fs';
 import path from 'path';
 import * as apn from 'apn';
-import type { NotificationData, NotificationDataAndroid } from '../types/types';
+import type { NotificationData } from '../types/types';
 import { NOTIFICATIONS } from '../constants.dev';
 import axios from 'axios';
 
@@ -81,7 +80,9 @@ export const sendCallNotificationAndroid = async (
     },
   })
     .then((res) => {
-      console.log('[ sendNotification ] data:', res.data);
+      if (res.data.success > 0) {
+        return 'success'
+      }
       return res.data;
     })
     .catch((error) => {
@@ -116,7 +117,6 @@ export const sendNotificationIos = async (
     },
   })
     .then((res) => {
-      console.log('[ sendNotification ] data:', res.data);
       return res.data;
     })
     .catch((error) => {
@@ -151,7 +151,6 @@ export const sendNotificationAndroid = async (
     },
   })
     .then((res) => {
-      console.log('[ sendNotification ] data:', res.data);
       return res.data;
     })
     .catch((error) => {

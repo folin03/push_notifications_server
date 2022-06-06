@@ -7,8 +7,8 @@ import { WEBRTC_REGISTRATION } from '../constants.dev';
 
 /**
  * return all users
- * @param req request from route
- * @param res response to route
+ * @param {Request} req request from route
+ * @param {Response} res response to route
  */
 export const routeAllUsers = (req: Request, res: Response) => {
   const db = connectDb();
@@ -19,8 +19,8 @@ export const routeAllUsers = (req: Request, res: Response) => {
 
 /**
  * return user if exists
- * @param req request from route (requires username)
- * @param res response to route
+ * @param {Request} req request from route (requires username)
+ * @param {Response} res response to route
  */
 export const routeGetUser = async (req: Request, res: Response) => {
   if (!req.body.username) {
@@ -47,8 +47,8 @@ export const routeGetUser = async (req: Request, res: Response) => {
 /**
  * creates user if the username is free
  * also it assigns webRTC Token
- * @param req request from route (requires username and platform)
- * @param res response to route
+ * @param {Request} req request from route (requires username and platform)
+ * @param {Response} res response to route
  * @returns information about new user created
  */
 export const routeCreateNewUser = async (req: Request, res: Response) => {
@@ -121,8 +121,8 @@ export const routeCreateNewUser = async (req: Request, res: Response) => {
 /**
  * if user exists in the database, it refreshes webRTC Token, saves it to the user on the server
  * and sends the token back to the user
- * @param req request from route (requires username and platform)
- * @param res response to route
+ * @param {Request} req request from route (requires username and platform)
+ * @param {Response} res response to route
  * @returns refreshed WebRTC Token
  */
 export const refreshWebrtcToken = async (req: Request, res: Response) => {
@@ -189,8 +189,8 @@ export const refreshWebrtcToken = async (req: Request, res: Response) => {
 
 /**
  * updates platform and fcmDeviceToken, if iosDevice token in request it gets updated as well
- * @param req request from route (requires username, platform and fcmDeviceToken)
- * @param res response to route
+ * @param {Request} req request from route (requires username, platform and fcmDeviceToken)
+ * @param {Response} res response to route
  * @returns updated user
  */
 export const routeUpdateUser = async (req: Request, res: Response) => {
@@ -247,8 +247,8 @@ export const routeUpdateUser = async (req: Request, res: Response) => {
 
 /**
  * delete user from database
- * @param req request from route (requires username)
- * @param res response to route
+ * @param {Request} req request from route (requires username)
+ * @param {Response} res response to route
  * @returns information if user was or was not deleted
  */
 export const routeDeleteUser = async (req: Request, res: Response) => {

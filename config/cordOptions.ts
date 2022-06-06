@@ -1,5 +1,4 @@
 import { CorsOptions } from 'cors';
-import { builtinModules } from 'module';
 
 const whitelist = ['http://127.0.0.1:5500', 'http://localhost:3500'];
 const corsOptions: CorsOptions = {

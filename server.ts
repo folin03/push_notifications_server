@@ -1,7 +1,6 @@
 import express, { Express } from 'express';
 import path from 'path';
 import cors from 'cors';
-import EventEmitter from 'events';
 
 import corsOptions from './config/cordOptions';
 import { logger } from './middleware/logEvents';
@@ -11,9 +10,6 @@ import root from './routes/root';
 import users from './routes/api/users';
 import notifications from './routes/api/notifications';
 import { connectDb } from './middleware/dbHandler';
-
-
-// EventEmitter.defaultMaxListeners = 25;
 
 const db = connectDb();
 
