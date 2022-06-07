@@ -5,8 +5,13 @@ import type { NotificationData } from '../types/types';
 import { NOTIFICATIONS } from '../constants.dev';
 import axios from 'axios';
 
-const ANDROID_URL = 'https://fcm.googleapis.com/fcm/send';
+const FCM_URL = 'https://fcm.googleapis.com/fcm/send';
 
+/**
+ * send VoIP notification to apple APN, using certificate stored in certificates folder
+ * @param {NotificationData} data notification to be send to apple APN 
+ * @returns APN response converted into success or fail message
+ */
 export const sendCallNotificationIos = async (
   data: NotificationData
 ): Promise<any> => {
@@ -54,17 +59,22 @@ export const sendCallNotificationIos = async (
   return response;
 };
 
+/**
+ * send Incoming call notification to Google FCM, using FCM Key
+ * @param {NotificationData} data notification to be send to FCM
+ * @returns FCM response converted into success or data message
+ */
 export const sendCallNotificationAndroid = async (
   data: NotificationData
 ): Promise<any> => {
   const response = axios({
     method: 'post',
-    url: ANDROID_URL,
+    url: FCM_URL,
     headers: {
       'Accept': '*/*',
       'Content-Type': 'application/json',
       'topic': data.bundle,
-      'Authorization': `key=${NOTIFICATIONS.ANDROID_KEY}`,
+      'Authorization': `key=${NOTIFICATIONS.FCM_KEY}`,
     },
     data: {
       to: data.fcmDeviceToken,
@@ -91,17 +101,22 @@ export const sendCallNotificationAndroid = async (
   return response;
 };
 
+/**
+ * send silent notification to iOS, using Google FCM and FCM Key
+ * @param {NotificationData} data notification to be send to FCM
+ * @returns FCM response converted into success or data message
+ */
 export const sendNotificationIos = async (
   data: NotificationData
 ): Promise<any> => {
   const response = axios({
     method: 'post',
-    url: ANDROID_URL,
+    url: FCM_URL,
     headers: {
       'Accept': '*/*',
       'Content-Type': 'application/json',
       'topic': data.bundle,
-      'Authorization': `key=${NOTIFICATIONS.ANDROID_KEY}`,
+      'Authorization': `key=${NOTIFICATIONS.FCM_KEY}`,
     },
     data: {
       to: data.fcmDeviceToken,
@@ -125,17 +140,22 @@ export const sendNotificationIos = async (
   return response;
 };
 
+/**
+ * send silent notification to Android, using Google FCM and FCM Key
+ * @param {NotificationData} data notification to be send to FCM
+ * @returns FCM response converted into success or data message
+ */
 export const sendNotificationAndroid = async (
   data: NotificationData
 ): Promise<any> => {
   const response = axios({
     method: 'post',
-    url: ANDROID_URL,
+    url: FCM_URL,
     headers: {
       'Accept': '*/*',
       'Content-Type': 'application/json',
       'topic': data.bundle,
-      'Authorization': `key=${NOTIFICATIONS.ANDROID_KEY}`,
+      'Authorization': `key=${NOTIFICATIONS.FCM_KEY}`,
     },
     data: {
       to: data.fcmDeviceToken,

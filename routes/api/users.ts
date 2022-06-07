@@ -1,3 +1,5 @@
+// Users routes
+
 import express from 'express';
 import * as usersController from '../../controllers/usersController';
 
@@ -13,7 +15,5 @@ router
   router.route('/user').get(usersController.routeGetUser);
 
   router.route('/get_token').post(usersController.refreshWebrtcToken);
-
-// router.route('/:id').get(usersController.getUser);
 
 export = router;

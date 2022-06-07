@@ -19,15 +19,15 @@ export const WEBRTC_REGISTRATION = {
   LOG_LEVEL,
 };
 
-// Notifications
+// Notifications constants
 const IOS_BUNDLE =
   'org.reactjs.native.example.AculabCallNotificationsExample.voip';
 const ANDROID_BUNDLE = 'com.aculab.examplecode.AculabCall';
-const ANDROID_KEY =
+const FCM_KEY =
   'AAAAvP6d37w:APA91bHTQNoFw2KtnKOfgWWzo-ljDcy_obIq8n52aHk0vjhtlZlXQ1haTqYJHZK0-pzfU9kuKP6tPTm1PiVc9J1JHDimqxZVnbCKD2mn6yDXpFeye0VuTMDixJw7AW-bIy4gY-_zzjHR';
 
 export const NOTIFICATIONS = {
   IOS_BUNDLE,
   ANDROID_BUNDLE,
-  ANDROID_KEY,
+  FCM_KEY,
 };
