@@ -76,6 +76,20 @@ export const NOTIFICATIONS = {
 };
 ```
 
+## Use the server
+
+install dependencies
+
+```terminal
+npm install
+```
+
+To run the server use run bellow command from root folder
+
+```terminal
+npm run dev
+```
+
 ## SQLite database
 
 This server uses SQLite database, it requires empty notificationServer.db file in the root folder, the users table is created when the server runs for the first time.
