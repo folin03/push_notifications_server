@@ -125,6 +125,8 @@ export const sendNotificationIos = async (
         body: data.callee,
         uuid: data.uuid,
         webrtc_ready: data.webrtc_ready,
+        call_rejected: data.call_rejected,
+        call_cancelled: data.call_cancelled,
       },
       content_available: true,
       topic: 'all',
@@ -132,6 +134,7 @@ export const sendNotificationIos = async (
     },
   })
     .then((res) => {
+      // console.log('notification sent', res);
       return res.data;
     })
     .catch((error) => {
@@ -164,6 +167,8 @@ export const sendNotificationAndroid = async (
         body: data.callee,
         uuid: data.uuid,
         webrtc_ready: data.webrtc_ready,
+        call_rejected: data.call_rejected,
+        call_cancelled: data.call_cancelled,
       },
       priority: 'high',
       topic: 'all',

@@ -46,7 +46,11 @@ export const newCallNotification = async (
 
   db.close(); //closing connection
 
-  if (!callee || !callee.fcmDeviceToken || (callee.platform === 'ios' && !callee.iosDeviceToken)) {
+  if (
+    !callee ||
+    (callee.platform !== 'web' && !callee.fcmDeviceToken) ||
+    (callee.platform === 'ios' && !callee.iosDeviceToken)
+  ) {
     return res
       .status(400)
       .json({ error: `callee ${notification.callee} is not registered` });
@@ -80,6 +84,7 @@ export const newCallNotification = async (
       // TODO deal with webBrowser option
       return res.status(200).json({ message: 'calling_web_interface' });
   }
+  console.log('notification', notificationResponse);
 
   if (notificationResponse === 'success') {
     res.status(200).json({ message: notificationResponse });
@@ -99,12 +104,15 @@ export const newNotification = async (
   res: Response
 ): Promise<any> => {
   console.log('newNotification', req.body);
+  let receivingUser: User | undefined
 
   const notification: Notification = {
     uuid: req.body.uuid,
     caller: req.body.caller,
     callee: req.body.callee,
     webrtc_ready: req.body.webrtc_ready,
+    call_rejected: req.body.call_rejected,
+    call_cancelled: req.body.call_cancelled,
   };
   if (!notification.uuid || !notification.caller || !notification.callee) {
     return res
@@ -113,7 +121,8 @@ export const newNotification = async (
   }
 
   const db = connectDb();
-  const caller: User | undefined = await getUser(db, notification.caller)
+  if (req.body.call_cancelled) {
+    receivingUser = await getUser(db, notification.callee)
     .then(data => {
       return data
     })
@@ -121,33 +130,48 @@ export const newNotification = async (
       console.error(err);
       return err
     });
+  } else {
+    receivingUser = await getUser(db, notification.caller)
+    .then(data => {
+      return data
+    })
+    .catch(err => {
+      console.error(err);
+      return err
+    });
+  }
+  
 
   db.close(); //closing connection
   
-  if (!caller || !caller.fcmDeviceToken) {
+  if (!receivingUser || !receivingUser.fcmDeviceToken) {
     return res
       .status(400)
       .json({ message: `caller ${notification.caller} is not registered` });
   }
 
   let notificationResponse;
-  switch (caller.platform) {
+  switch (receivingUser.platform) {
     case 'ios':
       notificationResponse = await sendNotificationIos({
         uuid: notification.uuid,
         callee: notification.callee,
-        fcmDeviceToken: caller.fcmDeviceToken,
+        fcmDeviceToken: receivingUser.fcmDeviceToken,
         bundle: NOTIFICATIONS.ANDROID_BUNDLE,
         webrtc_ready: notification.webrtc_ready,
+        call_rejected: notification.call_rejected,
+        call_cancelled: notification.call_cancelled,
       });
       break;
     case 'android':
       notificationResponse = await sendNotificationAndroid({
         uuid: notification.uuid,
         callee: notification.callee,
-        fcmDeviceToken: caller.fcmDeviceToken,
+        fcmDeviceToken: receivingUser.fcmDeviceToken,
         bundle: NOTIFICATIONS.ANDROID_BUNDLE,
         webrtc_ready: notification.webrtc_ready,
+        call_rejected: notification.call_rejected,
+        call_cancelled: notification.call_cancelled,
       });
       break;
     default:
@@ -156,9 +180,9 @@ export const newNotification = async (
       return res.status(200).json({ message: 'calling_web_interface' });
   }
 
-  if (notificationResponse === 'success') {
+  if (notificationResponse.success > 0 ) {
     res.status(200).json({ message: notificationResponse });
-    // } else {
-    //   res.status(400).json({'message': notificationResponse});
+    } else {
+    res.status(400).json({ message: notificationResponse });
   }
 };
